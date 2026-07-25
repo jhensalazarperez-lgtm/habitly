@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="{{ 'dark' if dark_mode else 'light' }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -82,6 +82,15 @@
           <label>Page theme color</label>
           <div class="color-picker" id="theme-color-picker"></div>
           <input type="hidden" id="theme-color-input" name="theme_color">
+        </div>
+        <div class="form-group">
+          <div class="toggle-row">
+            <label for="dark-mode-input">Dark mode</label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="dark-mode-input" name="dark_mode">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
         </div>
         <button type="submit" class="primary-button full-width">Save Profile</button>
       </form>
