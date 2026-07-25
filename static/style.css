@@ -1,0 +1,590 @@
+:root {
+  --accent: #723be8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #F2EFE9;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
+}
+
+.site-brand-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px 24px 0 24px;
+}
+
+.site-brand-name {
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: #1a1a1a;
+}
+
+.page-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 60px 24px 100px 24px;
+}
+
+/* --- Profile --- */
+
+.profile-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #D9D6CD;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.profile-avatar[hidden] {
+  /* !important is deliberate here: this rule's job is purely to enforce
+     the hidden attribute's visibility toggle, which must always win over
+     any other styling rule targeting the same element (like .placeholder
+     below) regardless of source order. */
+  display: none !important;
+}
+
+.profile-avatar.placeholder {
+  background: #F2EFE9;
+  color: #888888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.profile-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-weight: 700;
+  font-size: 15px;
+  margin: 0;
+}
+
+.profile-bio {
+  font-size: 13px;
+  color: #888888;
+  margin: 2px 0 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 10px;
+  flex-shrink: 0;
+}
+
+.text-button:hover {
+  text-decoration: underline;
+}
+
+/* --- Stats bar --- */
+
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.stat-box {
+  background: #ffffff;
+  border: 1px solid #D9D6CD;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.stat-value {
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  color: var(--accent);
+  margin: 0;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 4px 0 0 0;
+}
+
+/* --- Color picker (new habit form) --- */
+
+.color-picker {
+  display: flex;
+  gap: 10px;
+}
+
+.color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.selected {
+  border-color: #1a1a1a;
+}
+
+/* --- Category tag --- */
+
+.habit-category {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888888;
+  background: #F2EFE9;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  margin: 0;
+}
+
+.primary-button {
+  background-color: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.primary-button:hover {
+  background-color: #333333;
+}
+
+.primary-button:active {
+  transform: scale(0.98);
+}
+
+.primary-button.full-width {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* --- Habit list --- */
+
+.habit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.habit-row {
+  background: #ffffff;
+  border: 1px solid #D9D6CD;
+  border-left: 4px solid var(--accent);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.habit-row:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Detail modal: stats + chart --- */
+
+.detail-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.detail-stat {
+  background: #F2EFE9;
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+}
+
+.detail-stat-value {
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0;
+}
+
+.detail-stat-label {
+  font-size: 10px;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin: 2px 0 0 0;
+}
+
+.chart-wrapper {
+  margin-bottom: 24px;
+}
+
+.detail-subheading {
+  font-size: 13px;
+  font-weight: 700;
+  color: #555555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin: 0 0 12px 0;
+}
+
+.habit-info {
+  flex: 1;
+  min-width: 0;
+  padding-right: 12px;
+}
+
+.habit-info p {
+  margin: 0;
+}
+
+.habit-name {
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.habit-status {
+  font-size: 13px;
+  color: #888888;
+  margin-top: 2px;
+}
+
+.habit-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.streak-badge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: #F2EFE9;
+  color: #888888;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.streak-badge:hover {
+  transform: scale(1.05);
+}
+
+.streak-badge.active {
+  background: #F3E9FF;
+  color: var(--accent);
+}
+
+.log-today-btn {
+  background: #ffffff;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.log-today-btn:hover {
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+.log-today-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.delete-habit-btn {
+  background: none;
+  border: none;
+  color: #b3b3b3;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  transition: color 0.2s ease;
+}
+
+.delete-habit-btn:hover {
+  color: #d85a30;
+}
+
+.empty-state {
+  text-align: center;
+  color: #888888;
+  font-size: 14px;
+  margin-top: 40px;
+}
+
+/* --- Modals --- */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-box {
+  background: #ffffff;
+  padding: 36px 28px 28px 28px;
+  border-radius: 20px;
+  max-width: 460px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-box.gallery-modal {
+  max-width: 600px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 26px;
+  font-weight: 300;
+  color: #8c8c8c;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.close-btn:hover {
+  color: #111111;
+}
+
+.modal-box h2 {
+  margin: 0 0 20px 0;
+  font-size: 1.4rem;
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 700;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #D9D6CD;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.photo-preview {
+  margin-top: 10px;
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #D9D6CD;
+}
+
+/* --- Habit detail / log history --- */
+
+.detail-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.log-entry {
+  border: 1px solid #D9D6CD;
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.log-entry-photo {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.log-entry-body {
+  flex: 1;
+}
+
+.log-entry-date {
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0 0 2px 0;
+}
+
+.log-entry-meta {
+  font-size: 12px;
+  color: #888888;
+  margin: 0 0 4px 0;
+}
+
+.log-entry-notes {
+  font-size: 13px;
+  color: #333333;
+  margin: 0;
+}
+
+.no-logs {
+  color: #888888;
+  font-size: 13px;
+  text-align: center;
+  padding: 20px 0;
+}
+
+@media (max-width: 600px) {
+  .page-container {
+    padding: 40px 16px 80px 16px;
+  }
+
+  .habit-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .habit-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .profile-bar {
+    flex-wrap: wrap;
+  }
+
+  .stats-bar {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  .detail-stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}

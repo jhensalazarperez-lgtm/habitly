@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ app_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Condensed:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1a1a1a">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+
+  <div class="site-brand-bar">
+    <span class="site-brand-name">{{ app_name }}</span>
+    <a href="{{ url_for('logout') }}" class="text-button">Log Out</a>
+  </div>
+
+  <div class="page-container">
+
+    <!-- PROFILE -->
+    <div class="profile-bar" id="profile-bar">
+      <div class="profile-avatar-wrapper">
+        <img id="profile-avatar" class="profile-avatar" alt="Profile photo" hidden>
+        <div id="profile-avatar-placeholder" class="profile-avatar placeholder">?</div>
+      </div>
+      <div class="profile-text">
+        <p id="profile-name" class="profile-name">Your Name</p>
+        <p id="profile-bio" class="profile-bio"></p>
+      </div>
+      <button id="edit-profile-btn" class="text-button">Edit Profile</button>
+    </div>
+
+    <!-- SUMMARY STATS -->
+    <div class="stats-bar" id="stats-bar">
+      <div class="stat-box">
+        <p class="stat-value" id="stat-total-habits">0</p>
+        <p class="stat-label">Habits</p>
+      </div>
+      <div class="stat-box">
+        <p class="stat-value" id="stat-best-streak">0</p>
+        <p class="stat-label">Best Streak</p>
+      </div>
+      <div class="stat-box">
+        <p class="stat-value" id="stat-total-logs">0</p>
+        <p class="stat-label">Total Logs</p>
+      </div>
+    </div>
+
+    <div class="page-header">
+      <h1 class="page-title">My Habits</h1>
+      <button id="new-habit-btn" class="primary-button">+ New Habit</button>
+    </div>
+
+    <div id="habit-list" class="habit-list"></div>
+
+    <p id="empty-state" class="empty-state" hidden>No habits yet — add your first one above.</p>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="modal-profile" class="modal-overlay">
+    <div class="modal-box">
+      <span class="close-btn" data-close-modal>&times;</span>
+      <h2>Edit Profile</h2>
+      <form id="profile-form" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="profile-name-input">Name</label>
+          <input type="text" id="profile-name-input" name="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="profile-bio-input">Bio</label>
+          <textarea id="profile-bio-input" name="bio" rows="2" placeholder="A short line about you"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="profile-avatar-input">Profile photo</label>
+          <input type="file" id="profile-avatar-input" name="avatar" accept="image/*">
+        </div>
+        <div class="form-group">
+          <label>Page theme color</label>
+          <div class="color-picker" id="theme-color-picker"></div>
+          <input type="hidden" id="theme-color-input" name="theme_color">
+        </div>
+        <button type="submit" class="primary-button full-width">Save Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- New Habit Modal -->
+  <div id="modal-new-habit" class="modal-overlay">
+    <div class="modal-box">
+      <span class="close-btn" data-close-modal>&times;</span>
+      <h2>New Habit</h2>
+      <form id="new-habit-form">
+        <div class="form-group">
+          <label for="habit-name">Habit name</label>
+          <input type="text" id="habit-name" name="name" placeholder="e.g. Study Python" required>
+        </div>
+        <div class="form-group">
+          <label for="habit-category">Category — optional</label>
+          <input type="text" id="habit-category" name="category" placeholder="e.g. Learning, Health, Career">
+        </div>
+        <button type="submit" class="primary-button full-width">Create Habit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Log Today Modal -->
+  <div id="modal-log" class="modal-overlay">
+    <div class="modal-box">
+      <span class="close-btn" data-close-modal>&times;</span>
+      <h2>Log Today</h2>
+      <form id="log-form" enctype="multipart/form-data">
+        <input type="hidden" id="log-habit-id" name="habit_id">
+        <div class="form-group">
+          <label for="log-duration">Duration (minutes) — optional</label>
+          <input type="number" id="log-duration" name="duration_minutes" min="0" placeholder="30">
+        </div>
+        <div class="form-group">
+          <label for="log-notes">Notes — optional</label>
+          <textarea id="log-notes" name="notes" rows="3" placeholder="How did it go?"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="log-photo">Add a photo — optional</label>
+          <input type="file" id="log-photo" name="photo" accept="image/*">
+          <img id="photo-preview" class="photo-preview" hidden>
+        </div>
+        <button type="submit" class="primary-button full-width">Save Log</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Habit Detail Modal -->
+  <div id="modal-detail" class="modal-overlay">
+    <div class="modal-box gallery-modal">
+      <span class="close-btn" data-close-modal>&times;</span>
+      <h2 id="detail-habit-name">Habit</h2>
+
+      <div class="detail-stats-row" id="detail-stats-row"></div>
+
+      <div class="chart-wrapper">
+        <canvas id="weekly-chart" height="140"></canvas>
+      </div>
+
+      <p class="detail-subheading">History</p>
+      <div id="detail-logs" class="detail-logs"></div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
