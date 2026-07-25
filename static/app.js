@@ -45,6 +45,10 @@ function applyTheme(color) {
   document.documentElement.style.setProperty("--accent", color);
 }
 
+function applyDarkMode(isDark) {
+  document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+}
+
 function renderThemePicker() {
   const picker = document.getElementById("theme-color-picker");
   picker.innerHTML = "";
@@ -92,10 +96,17 @@ async function loadProfile() {
   document.getElementById("theme-color-input").value = selectedTheme;
   applyTheme(selectedTheme);
   renderThemePicker();
+
+  document.getElementById("dark-mode-input").checked = !!profile.dark_mode;
+  applyDarkMode(!!profile.dark_mode);
 }
 
 document.getElementById("edit-profile-btn").addEventListener("click", () => {
   openModal(modalProfile);
+});
+
+document.getElementById("dark-mode-input").addEventListener("change", (e) => {
+  applyDarkMode(e.target.checked); // live preview before saving
 });
 
 document.getElementById("profile-form").addEventListener("submit", async (e) => {
