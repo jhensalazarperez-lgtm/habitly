@@ -102,10 +102,16 @@ def init_db():
             bio TEXT,
             avatar_filename TEXT,
             theme_color TEXT NOT NULL DEFAULT '#723be8',
+            dark_mode INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
         )
         """
     )
+
+    # Migration for anyone running an older copy of this DB.
+    profile_columns = {row["name"] for row in conn.execute("PRAGMA table_info(profile)")}
+    if "dark_mode" not in profile_columns:
+        conn.execute("ALTER TABLE profile ADD COLUMN dark_mode INTEGER NOT NULL DEFAULT 0")
 
     conn.commit()
     conn.close()
@@ -271,7 +277,13 @@ def logout():
 @app.route("/")
 @login_required_page
 def index():
-    return render_template("index.html", app_name=APP_NAME, tagline=APP_TAGLINE)
+    conn = get_db()
+    row = conn.execute(
+        "SELECT dark_mode FROM profile WHERE user_id = ?", (session["user_id"],)
+    ).fetchone()
+    conn.close()
+    dark_mode = bool(row["dark_mode"]) if row else False
+    return render_template("index.html", app_name=APP_NAME, tagline=APP_TAGLINE, dark_mode=dark_mode)
 
 
 # ---------------------------------------------------------------------------
@@ -290,6 +302,7 @@ def get_profile():
             "bio": row["bio"],
             "avatar_url": f"/uploads/{row['avatar_filename']}" if row["avatar_filename"] else None,
             "theme_color": row["theme_color"],
+            "dark_mode": bool(row["dark_mode"]),
         }
     )
 
@@ -300,6 +313,8 @@ def update_profile():
     user_id = session["user_id"]
     name = (request.form.get("name") or "").strip() or "Your Name"
     bio = request.form.get("bio") or ""
+    # Checkbox: present in form data (any value) means checked/on.
+    dark_mode = 1 if request.form.get("dark_mode") else 0
 
     conn = get_db()
     current = conn.execute(
@@ -326,8 +341,8 @@ def update_profile():
         avatar.save(os.path.join(app.config["UPLOAD_FOLDER"], secure_filename(avatar_filename)))
 
     conn.execute(
-        "UPDATE profile SET name = ?, bio = ?, avatar_filename = ?, theme_color = ? WHERE user_id = ?",
-        (name, bio, avatar_filename, theme_color, user_id),
+        "UPDATE profile SET name = ?, bio = ?, avatar_filename = ?, theme_color = ?, dark_mode = ? WHERE user_id = ?",
+        (name, bio, avatar_filename, theme_color, dark_mode, user_id),
     )
     conn.commit()
     conn.close()
@@ -337,6 +352,7 @@ def update_profile():
             "name": name,
             "bio": bio,
             "avatar_url": f"/uploads/{avatar_filename}" if avatar_filename else None,
+            "dark_mode": bool(dark_mode),
             "theme_color": theme_color,
         }
     )
