@@ -11,14 +11,23 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# NOTE: this generates a new random secret key every time the app restarts,
-# which means everyone gets logged out on restart. Fine for development.
-# Before deploying for real, set a fixed SECRET_KEY via an environment
-# variable instead, e.g.: app.secret_key = os.environ["SECRET_KEY"]
-app.secret_key = secrets.token_hex(32)
+# In production (Render), set SECRET_KEY as an environment variable so
+# sessions survive restarts. Locally, it falls back to a random key each
+# run, which is fine since nobody needs to stay logged in across restarts
+# on your own machine.
+app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "habit_tracker.db")
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+# DATA_DIR lets deployment point the database and uploads at a persistent
+# disk (e.g. Render's mounted disk at /data) instead of the app folder,
+# which gets wiped on every redeploy. Locally this just defaults to the
+# project folder, so nothing changes when you run it on your own machine.
+DATA_DIR = os.environ.get("DATA_DIR", os.path.dirname(__file__))
+os.makedirs(DATA_DIR, exist_ok=True)
+
+DB_PATH = os.path.join(DATA_DIR, "habit_tracker.db")
+UPLOAD_FOLDER = os.path.join(DATA_DIR, "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 MAX_FILE_SIZE_MB = 5
 
@@ -621,6 +630,14 @@ def service_worker():
 
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# This runs every time the module is loaded — whether via `python app.py`
+# (local dev) or via `gunicorn app:app` (production/Render). Gunicorn never
+# executes the `if __name__ == "__main__":` block below, so init_db() has
+# to live out here to guarantee the database tables actually get created
+# before any request comes in.
+# ---------------------------------------------------------------------------
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
