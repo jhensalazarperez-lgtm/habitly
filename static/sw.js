@@ -1,15 +1,13 @@
-const CACHE_NAME = "habitly-v1";
+const CACHE_NAME = "habitly-v2";
 
-// Only cache things that are safe to reuse for anyone: public auth pages
-// and static assets. We deliberately do NOT cache "/" (the main app page)
-// since it's personalized per logged-in user and behind auth.
+// Only cache things that never change per-user: pure static assets.
+// Auth pages (login/signup/logout) are intentionally NOT cached, since
+// caching them caused stale-page issues around login/logout transitions.
 const STATIC_ASSETS = [
   "/static/style.css",
   "/static/auth.css",
   "/static/app.js",
-  "/static/manifest.json",
-  "/login",
-  "/signup"
+  "/static/manifest.json"
 ];
 
 self.addEventListener("install", (event) => {
@@ -48,14 +46,17 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Never cache the personalized main app page or uploaded photos -
-  // always go to network for these.
-  if (url.pathname === "/" || url.pathname.startsWith("/uploads/")) {
+  // Auth flow pages and the personalized main app page must always be
+  // fresh from the server, never served from cache - these involve
+  // session state (login/logout/signup) that a cached response would
+  // get wrong.
+  const alwaysNetwork = ["/", "/login", "/signup", "/logout"];
+  if (alwaysNetwork.includes(url.pathname) || url.pathname.startsWith("/uploads/")) {
     event.respondWith(fetch(event.request));
     return;
   }
 
-  // Everything else (static assets, auth pages) -> cache first.
+  // Everything else (plain static assets like CSS/JS/manifest) -> cache first.
   event.respondWith(
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
