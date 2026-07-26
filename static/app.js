@@ -5,6 +5,24 @@ const modalNewHabit = document.getElementById("modal-new-habit");
 const modalLog = document.getElementById("modal-log");
 const modalDetail = document.getElementById("modal-detail");
 const modalProfile = document.getElementById("modal-profile");
+const modalConfirmDelete = document.getElementById("modal-confirm-delete");
+
+let pendingDeleteHabitId = null;
+
+function openDeleteConfirm(habitId, habitName) {
+  pendingDeleteHabitId = habitId;
+  document.getElementById("confirm-delete-name").textContent = habitName || "this habit";
+  openModal(modalConfirmDelete);
+}
+
+document.getElementById("confirm-delete-btn").addEventListener("click", async () => {
+  if (!pendingDeleteHabitId) return;
+  await fetch(`/api/habits/${pendingDeleteHabitId}`, { method: "DELETE" });
+  pendingDeleteHabitId = null;
+  closeModal(modalConfirmDelete);
+  loadHabits();
+  loadSummaryStats();
+});
 
 const HABIT_COLORS = ["#723be8", "#d99c3f", "#3f9c8b", "#d85a70", "#4a90d9"];
 const THEME_COLORS = ["#723be8", "#d99c3f", "#3f9c8b", "#d85a70", "#4a90d9", "#1a1a1a", "#2f6fa8"];
@@ -47,6 +65,12 @@ function applyTheme(color) {
 
 function applyDarkMode(isDark) {
   document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+  try {
+    localStorage.setItem("habitly_dark_mode", isDark ? "1" : "0");
+  } catch (e) {
+    // localStorage can be unavailable (private browsing, etc.) - harmless
+    // to skip, the account's real setting still applies after login.
+  }
 }
 
 function renderThemePicker() {
@@ -161,7 +185,7 @@ async function loadHabits() {
         <button class="log-today-btn" data-log-habit="${habit.id}" ${habit.logged_today ? "disabled" : ""}>
           ${habit.logged_today ? "Logged" : "Log today"}
         </button>
-        <button class="delete-habit-btn" data-delete-habit="${habit.id}" aria-label="Delete habit">&times;</button>
+        <button class="delete-habit-btn" data-delete-habit="${habit.id}" data-habit-name="${escapeHtml(habit.name)}" aria-label="Delete habit">&times;</button>
       </div>
     `;
 
@@ -180,12 +204,9 @@ async function loadHabits() {
   });
 
   document.querySelectorAll("[data-delete-habit]").forEach((btn) => {
-    btn.addEventListener("click", async (e) => {
+    btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (!confirm("Delete this habit and all its logs?")) return;
-      await fetch(`/api/habits/${btn.dataset.deleteHabit}`, { method: "DELETE" });
-      loadHabits();
-      loadSummaryStats();
+      openDeleteConfirm(btn.dataset.deleteHabit, btn.dataset.habitName);
     });
   });
 
