@@ -297,11 +297,11 @@ body {
   background-color: var(--text-primary);
   color: var(--bg);
   border: none;
-  border-radius: 8px;
-  padding: 12px 20px;
+  border-radius: 10px;
+  padding: 15px 20px;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.15s ease;
 }
@@ -639,14 +639,20 @@ body {
 .form-group input[type="file"],
 .form-group textarea {
   width: 100%;
-  padding: 14px 16px;
-  border: 1px solid var(--border);
+  min-height: 52px;
+  padding: 14px 18px;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
   font-family: 'Inter', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1.4;
   background: var(--surface);
   color: var(--text-primary);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group textarea {
+  min-height: 90px;
 }
 
 .form-group input[type="text"]:focus,
