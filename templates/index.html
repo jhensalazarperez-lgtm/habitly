@@ -158,6 +158,19 @@
     </div>
   </div>
 
+  <!-- Confirm Delete Modal -->
+  <div id="modal-confirm-delete" class="modal-overlay">
+    <div class="modal-box confirm-box">
+      <span class="close-btn" data-close-modal>&times;</span>
+      <h2>Delete habit?</h2>
+      <p class="confirm-message">This removes <strong id="confirm-delete-name">this habit</strong> and every log entry attached to it. This can't be undone.</p>
+      <div class="confirm-actions">
+        <button type="button" class="secondary-button" data-close-modal>Cancel</button>
+        <button type="button" class="danger-button" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
