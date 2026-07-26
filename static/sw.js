@@ -1,4 +1,4 @@
-const CACHE_NAME = "habitly-v2";
+const CACHE_NAME = "habitly-v4";
 
 // Only cache things that never change per-user: pure static assets.
 // Auth pages (login/signup/logout) are intentionally NOT cached, since
@@ -47,17 +47,29 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Auth flow pages and the personalized main app page must always be
-  // fresh from the server, never served from cache - these involve
-  // session state (login/logout/signup) that a cached response would
-  // get wrong.
+  // fresh from the server, never served from cache. We deliberately do
+  // NOT call respondWith() for these at all - if we re-fetch them
+  // ourselves and that fetch() rejects (e.g. Render's free-tier server
+  // waking up from sleep, which can take up to ~50s), Chrome shows a
+  // hard "ERR_FAILED" instead of its normal loading/retry behavior. Not
+  // calling respondWith() lets the browser handle the request exactly
+  // as if there were no service worker involved at all.
   const alwaysNetwork = ["/", "/login", "/signup", "/logout"];
   if (alwaysNetwork.includes(url.pathname) || url.pathname.startsWith("/uploads/")) {
-    event.respondWith(fetch(event.request));
     return;
   }
 
-  // Everything else (plain static assets like CSS/JS/manifest) -> cache first.
+  // Static assets (CSS/JS/manifest) -> NETWORK FIRST, cache only as an
+  // offline fallback. Cache-first was causing deployed CSS/JS updates to
+  // never actually reach the browser, since the very first cached copy
+  // would be served forever regardless of what changed on the server.
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
