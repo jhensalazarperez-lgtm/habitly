@@ -639,11 +639,11 @@ body {
 .form-group input[type="file"],
 .form-group textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 10px;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   background: var(--surface);
   color: var(--text-primary);
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
