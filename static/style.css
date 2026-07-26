@@ -319,6 +319,71 @@ body {
   margin-top: 8px;
 }
 
+/* --- Secondary/danger buttons (confirm delete modal) --- */
+
+.secondary-button {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.secondary-button:hover {
+  background: var(--surface-muted);
+}
+
+.danger-button {
+  background: #d85a30;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.danger-button:hover {
+  background: #c14a24;
+}
+
+.danger-button:active {
+  transform: scale(0.98);
+}
+
+.confirm-box {
+  max-width: 380px;
+}
+
+.confirm-message {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+}
+
+.confirm-message strong {
+  color: var(--text-primary);
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-actions .secondary-button,
+.confirm-actions .danger-button {
+  flex: 1;
+}
+
 /* --- Habit list --- */
 
 .habit-list {
@@ -568,16 +633,30 @@ body {
 }
 
 .form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
 .form-group input[type="number"],
 .form-group input[type="file"],
 .form-group textarea {
-  padding: 10px 12px;
+  width: 100%;
+  padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
   background: var(--surface);
   color: var(--text-primary);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="number"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .form-group textarea {
